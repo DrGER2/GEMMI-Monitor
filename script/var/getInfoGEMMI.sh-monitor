@@ -1,0 +1,60 @@
+#!/bin/ksh
+# Author: DHuerlimann
+
+# 20221126 drger; Find SD1 path from mount(8)
+# 20211214 drger; Added GoogleEarthPlus.conf, ifconfig -a
+
+echo "## Timestamp: $(getTime) ##"
+if [ -x /mnt/nav/gemmi/gemmi_final ]
+then
+  echo; echo "[INFO] Get Info GEMMI"
+  use /mnt/nav/gemmi/gemmi_final
+  echo "## done ##"	  
+else
+  echo "## GEMMI not installed ##"
+  echo "## Doing nothing ##"
+fi
+
+echo
+
+echo "---------------------------------------"
+echo "Connectivity Status:"
+echo "---------------------------------------"
+
+echo; echo "Content of _CS_RESOLVE"
+getconf _CS_RESOLVE
+
+if [ -f /etc/resolv.conf ]
+then
+  echo; echo "Contents of /etc/resolv.conf:"
+  cat /etc/resolv.conf
+else
+  echo "/etc/resolv.conf is not set"	
+fi
+
+# Copy info to SD 1 if FAT32 mounted
+xsd1="/fs/sd0"
+if [ -e "$xsd1" ]
+then
+  mount -uw $xsd1
+  xnetstatfile=${xsd1}/netstatus-$(getTime).txt
+  echo; echo "[ACTI] Writing $xnetstatfile ..."
+  echo "[INFO] Timestamp: $(getTime)" > $xnetstatfile
+  echo "[INFO] ifconfig -a" >> $xnetstatfile
+  ifconfig -a >> $xnetstatfile
+  echo "[INFO] ifconfig ppp0" >> $xnetstatfile
+  ifconfig -v ppp0 >> $xnetstatfile
+  echo "[INFO] ifconfig en5" >> $xnetstatfile
+  ifconfig -v en5 >> $xnetstatfile
+  echo "[INFO] route show" >> $xnetstatfile
+  route show >> $xnetstatfile
+
+  echo; echo "[ACTI] Copying file to SD 1 ..."
+  cp -v /mnt/nav/gemmi/.config/Google/GoogleEarthPlus.conf \
+    ${xsd1}/GoogleEarthPlus.conf-$(getTime)
+  cp -v /mnt/persistence/log/*.log ${xsd1}/
+  mount -ur $xsd1
+  echo; echo "[INFO] OK to remove SD 1."
+else
+  echo "[INFO] No usable SD card found in slot 1 (${xsd1})."
+fi

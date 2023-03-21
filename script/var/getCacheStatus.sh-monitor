@@ -1,0 +1,16 @@
+#!/bin/ksh
+# Author: DHuerlimann
+
+echo "[INFO] Timestamp: $(getTime)"
+echo
+echo "---------------------------------------"
+echo "Cache Status: (measures in kbytes)     "
+echo "---------------------------------------"
+
+echo "PARTITION                TOTAL       USED    FREE      %-USED  MOUNTPOINT"
+df -k /mnt/img-cache
+
+echo; ls -o /mnt/img-cache/gemmi/cache/
+
+# 20220101 drger; du QNX binary not found on MMI3GP systems
+echo; echo "### Done ###"
