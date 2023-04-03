@@ -52,7 +52,7 @@ do
         echo "[GEMMI] Network down $xfnr1 $xfnr2 $(getTime)"
         if [ X"$xfnr1" = X"xfnr2" ]
         then
-          if [ -n "$(ifconfig $xnetif | grep 'status: active')" ]
+          if [ -n "$(ifconfig -v $xnetif | grep 'status: active')" ]
           then
             echo "[GEMMI] Terminate gemmi_final process $(getTime)"
             slay -s KILL gemmi_final
