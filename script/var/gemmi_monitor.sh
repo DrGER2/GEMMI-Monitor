@@ -1,5 +1,6 @@
 #!/bin/ksh
 
+# 20230402 drger; added -v to ifconfig
 # 20230320 drger; bug fix, added timestamp
 # 20221122 drger; Monitor GEMMI network connection status
 
@@ -8,7 +9,7 @@ export xgemmilog=${LOGDIR}/gemmi.log
 
 xgemminetstatus()
 {
-  if [ -n "$(ifconfig $xnetif | grep 'status: active')" ]
+  if [ -n "$(ifconfig -v $xnetif | grep 'status: active')" ]
   then
     xt0="$(sed -n 'H; /^\[GEMMI\] gemmi_final start:/h; ${g;p;}' $xgemmilog |
            grep '^Network ' | sed -n '$p')"
