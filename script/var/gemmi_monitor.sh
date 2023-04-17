@@ -1,6 +1,6 @@
 #!/bin/ksh
 
-# 20230402 drger; added -v to ifconfig
+# 20230402 drafe; add -v to ifconfig
 # 20230320 drger; bug fix, added timestamp
 # 20221122 drger; Monitor GEMMI network connection status
 
@@ -32,7 +32,7 @@ else
   xnetif=ppp0
 fi
 export xnetif
-echo "[GEMMI] gemmi_monitor script start $xnetif $(getTime)"
+echo "[GEMMI] gemmi_monitor v230416: $xnetif $(getTime)"
 nts=0
 while true
 do
@@ -51,12 +51,12 @@ do
       then
         xfnr2="$(echo $xnetstatus | sed 's/^down //')"
         echo "[GEMMI] Network down $xfnr1 $xfnr2 $(getTime)"
-        if [ X"$xfnr1" = X"xfnr2" ]
+        if [ X"$xfnr1" = X"$xfnr2" ]
         then
-          if [ -n "$(ifconfig -v $xnetif | grep 'status: active')" ]
+          if [ -n "$(ifconfig $xnetif | grep 'status: active')" ]
           then
             echo "[GEMMI] Terminate gemmi_final process $(getTime)"
-            slay -s KILL gemmi_final
+            slay gemmi_final
             break
           fi
         fi
